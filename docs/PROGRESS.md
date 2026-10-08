@@ -23,3 +23,10 @@
 - repo: github.com/holoolook-del/necut (API 생성)
 - Pages: build_type=workflow 활성화, deploy.yml(pnpm→build→Pages) 자동 실행 성공
 - https://holoolook-del.github.io/necut/ 200 확인, 프레임 에셋 200 확인
+
+## T2 — 필터 확장 (완료)
+- `src/lib/filters.ts` — 톤 보정 파이프라인 toneAdjust(온도→노출→대비→스플릿토닝→채도→페이드→그레인→비네트) + FILTERS 레지스트리 9종
+- 필터: 민화 / 일본 감성(하이키) / 화사한 보정 / 코닥 필름 / 후지 청량 / 시네마틱 / 도시 네온 / 시골 여름 / 흑백
+- 레시피 근거: 일본풍=노출↑+대비↓+블랙리프트, 필름=페이드+그레인+스플릿토닝(Kodak 따뜻/Fuji 청록), 시네마틱=틸섀도·오렌지하이라이트, 흑백=Ilford식 고대비+그레인
+- App: 촬영 시 raw ImageData 저장 → 꾸미기 단계에서 필터 실시간 전환(썸네일·필터 칩 미리보기·최종 합성 모두 적용)
+- vitest 7/7 (노출/무채색/비네트/전필터 스모크)

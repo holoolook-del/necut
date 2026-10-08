@@ -1,6 +1,7 @@
 # CODE_INDEX
 
 ## lib
+- `src/lib/filters.ts` — 필터 레지스트리 `FILTERS` 9종 + `applyFilter(ImageData, id)` + `toneAdjust(ImageData, Tone)` 톤 보정 파이프라인
 - `src/lib/minhwa.ts` — 민화 필터. `minhwaize(ImageData, opts?) → ImageData` (포스터라이즈+틴트+Sobel 먹선), `toImageData(source, sw, sh, outW, outH) → ImageData` (cover 크롭+다운스케일)
 - `src/lib/compose.ts` — 네컷 합성. `compose4cut(ImageData[4], frameSrc) → Promise<HTMLCanvasElement>` (프레임 배경 + 4슬롯 + 낙관/캡션)
 

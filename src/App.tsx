@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { minhwaize, toImageData } from './lib/minhwa.ts';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toImageData } from './lib/minhwa.ts';
+import { applyFilter, FILTERS } from './lib/filters.ts';
 import { compose4cut } from './lib/compose.ts';
 
 const BASE = import.meta.env.BASE_URL;
@@ -17,6 +18,7 @@ type Step = 'shoot' | 'frame' | 'result';
 export function App() {
   const [step, setStep] = useState<Step>('shoot');
   const [shots, setShots] = useState<ImageData[]>([]);
+  const [filterId, setFilterId] = useState('minhwa');
   const [frameIdx, setFrameIdx] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
@@ -62,7 +64,7 @@ export function App() {
     }
     setCountdown(null);
     const raw = toImageData(video, video.videoWidth, video.videoHeight, PHOTO_W, PHOTO_H);
-    addShot(minhwaize(raw));
+    addShot(raw);
   }, [addShot]);
 
   // 4컷 연속 촬영
@@ -92,7 +94,7 @@ export function App() {
           i.src = url;
         });
         const raw = toImageData(img, img.naturalWidth, img.naturalHeight, PHOTO_W, PHOTO_H);
-        addShot(minhwaize(raw));
+        addShot(raw);
         URL.revokeObjectURL(url);
       }
       setBusy(false);
@@ -102,11 +104,12 @@ export function App() {
 
   const compose = useCallback(async () => {
     setBusy(true);
-    const canvas = await compose4cut(shots, `${BASE}assets/frames/${FRAMES[frameIdx].id}.webp`);
+    const filtered = shots.map((s) => applyFilter(s, filterId));
+    const canvas = await compose4cut(filtered, `${BASE}assets/frames/${FRAMES[frameIdx].id}.webp`);
     setResultUrl(canvas.toDataURL('image/png'));
     setBusy(false);
     setStep('result');
-  }, [shots, frameIdx]);
+  }, [shots, frameIdx, filterId]);
 
   const download = () => {
     if (!resultUrl) return;
@@ -162,7 +165,7 @@ export function App() {
                   </div>
                 )}
                 <div className="absolute right-2 top-2 rounded bg-ink/70 px-2 py-0.5 text-[10px] text-paper">
-                  민화 필터 미리보기는 촬영 후 적용돼요
+                  필터는 다음 단계에서 골라요
                 </div>
               </>
             )}
@@ -175,7 +178,7 @@ export function App() {
                 key={i}
                 className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-lg border border-ink/20 bg-paper-dim text-xs text-inkline/40"
               >
-                {shots[i] ? <ShotThumb shot={shots[i]} /> : i + 1}
+                {shots[i] ? <ShotThumb shot={shots[i]} filterId={filterId} /> : i + 1}
               </div>
             ))}
           </div>
@@ -234,6 +237,25 @@ export function App() {
 
       {step === 'frame' && (
         <section className="flex flex-1 flex-col gap-4">
+          <h2 className="text-sm font-bold text-inkline">필터를 고르세요</h2>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setFilterId(f.id)}
+                className={`w-20 shrink-0 overflow-hidden rounded-lg border-2 text-left ${
+                  f.id === filterId ? 'border-ink shadow-md' : 'border-ink/15'
+                }`}
+              >
+                <FilterPreview shot={shots[0]} filterId={f.id} />
+                <div className="bg-paper/90 px-1.5 py-1">
+                  <p className="text-[10px] font-bold leading-tight text-inkline">{f.name}</p>
+                  <p className="text-[8px] leading-tight text-inkline/60">{f.desc}</p>
+                </div>
+              </button>
+            ))}
+          </div>
           <h2 className="text-sm font-bold text-inkline">프레임을 고르세요</h2>
           <div className="grid grid-cols-2 gap-3">
             {FRAMES.map((f, i) => (
@@ -305,10 +327,40 @@ export function App() {
   );
 }
 
-function ShotThumb({ shot }: { shot: ImageData }) {
+function ShotThumb({ shot, filterId }: { shot: ImageData; filterId: string }) {
+  const filtered = useMemo(() => applyFilter(shot, filterId), [shot, filterId]);
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    ref.current?.getContext('2d')?.putImageData(shot, 0, 0);
-  }, [shot]);
-  return <canvas ref={ref} width={shot.width} height={shot.height} className="h-full w-full object-cover" />;
+    ref.current?.getContext('2d')?.putImageData(filtered, 0, 0);
+  }, [filtered]);
+  return <canvas ref={ref} width={filtered.width} height={filtered.height} className="h-full w-full object-cover" />;
+}
+
+/** 첫 컷을 축소해 필터별 미리보기 칩으로 렌더링 */
+function FilterPreview({ shot, filterId }: { shot: ImageData | undefined; filterId: string }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const cv = ref.current;
+    if (!cv) return;
+    const ctx = cv.getContext('2d')!;
+    const w = 96;
+    const h = 54;
+    if (!shot) {
+      ctx.fillStyle = '#ece2cc';
+      ctx.fillRect(0, 0, w, h);
+      return;
+    }
+    // 축소 복사 → 필터 적용 → 출력
+    const tmp = document.createElement('canvas');
+    tmp.width = shot.width;
+    tmp.height = shot.height;
+    tmp.getContext('2d')!.putImageData(shot, 0, 0);
+    const small = document.createElement('canvas');
+    small.width = w;
+    small.height = h;
+    small.getContext('2d')!.drawImage(tmp, 0, 0, w, h);
+    const img = applyFilter(small.getContext('2d')!.getImageData(0, 0, w, h), filterId);
+    ctx.putImageData(img, 0, 0);
+  }, [shot, filterId]);
+  return <canvas ref={ref} width={96} height={54} className="block w-full" />;
 }
