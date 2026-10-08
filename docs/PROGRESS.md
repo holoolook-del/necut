@@ -18,3 +18,8 @@
 ### 다음 할 일
 - GitHub repo 생성 + Pages 배포
 - 실기기 확인
+
+## 배포 (완료)
+- repo: github.com/holoolook-del/necut (API 생성)
+- Pages: build_type=workflow 활성화, deploy.yml(pnpm→build→Pages) 자동 실행 성공
+- https://holoolook-del.github.io/necut/ 200 확인, 프레임 에셋 200 확인
