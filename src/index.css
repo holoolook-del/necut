@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #f5eedd;
+  --color-paper-dim: #ece2cc;
+  --color-ink: #16151a;
+  --color-vermilion: #c8402a;
+  --color-inkline: #4a4536;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: 'Noto Serif KR', 'Nanum Myeongjo', serif;
+}
