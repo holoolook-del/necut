@@ -119,19 +119,34 @@ export function App() {
     a.click();
   };
 
+  const [notice, setNotice] = useState<string | null>(null);
+
   const share = async () => {
     if (!resultUrl) return;
     const blob = await (await fetch(resultUrl)).blob();
     const file = new File([blob], 'minhwa-necut.png', { type: 'image/png' });
-    if (navigator.canShare?.({ files: [file] })) {
-      try {
+    // 1순위: 이미지 파일 공유 (모바일 OS 공유 시트)
+    try {
+      if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: '민화네컷 — 내 사진이 민화가 됐다' });
         return;
-      } catch (e) {
-        if ((e as Error).name === 'AbortError') return;
       }
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return;
     }
+    // 2순위: 텍스트+링크 공유
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: '민화네컷', text: '내 사진이 민화가 됐어 — 너도 만들어봐!', url: location.href });
+        return;
+      }
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return;
+    }
+    // 3순위: 공유 자체가 안 되는 환경 — 저장으로 대체하고 이유를 알려줌
     download();
+    setNotice('이 브라우저는 공유를 지원하지 않아 이미지로 저장했어요');
+    setTimeout(() => setNotice(null), 3500);
   };
 
   const restart = () => {
@@ -142,9 +157,17 @@ export function App() {
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-paper px-4 pb-6 pt-5 text-ink">
-      <header className="mb-4 text-center">
-        <h1 className="text-2xl font-bold tracking-widest">민화네컷</h1>
-        <p className="mt-1 text-xs text-inkline/70">내 사진이 민화가 되는 네 컷</p>
+      <header className="mb-4">
+        <a
+          href="https://holoolook-del.github.io/sajoo/"
+          className="text-xs text-inkline/60 underline-offset-2 hover:underline"
+        >
+          ← 사주 홈으로
+        </a>
+        <div className="mt-1 text-center">
+          <h1 className="text-2xl font-bold tracking-widest">민화네컷</h1>
+          <p className="mt-1 text-xs text-inkline/70">내 사진이 민화가 되는 네 컷</p>
+        </div>
       </header>
 
       {step === 'shoot' && (
@@ -301,10 +324,22 @@ export function App() {
             <button
               type="button"
               onClick={restart}
-              className="rounded-xl border border-ink/30 px-4 py-3 text-sm font-bold text-inkline"
+              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
             >
-              다시
+              다시 찍기
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                setResultUrl(null);
+                setStep('frame');
+              }}
+              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+            >
+              필터·배경 바꾸기
+            </button>
+          </div>
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={download}
@@ -315,11 +350,12 @@ export function App() {
             <button
               type="button"
               onClick={share}
-              className="flex-1 rounded-xl bg-ink py-3 text-sm font-bold text-paper"
+              className="flex-[2] rounded-xl bg-ink py-3 text-sm font-bold text-paper"
             >
               친구에게 공유
             </button>
           </div>
+          {notice && <p className="text-center text-xs text-vermilion">{notice}</p>}
           <p className="text-center text-[11px] text-inkline/50">사진은 기기에만 저장되고 서버로 보내지 않습니다</p>
         </section>
       )}

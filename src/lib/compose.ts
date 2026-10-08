@@ -47,6 +47,8 @@ function drawCover(
 /**
  * 사진 4장(16:9 권장) + 프레임 이미지 → 네컷 스트립 캔버스.
  * 출력은 프레임 원본의 1.6배 크기.
+ * 슬롯 크기는 가용 높이에서 자동 산출하고 사진 비율(16:9)에 정확히 맞춘다 —
+ * 프레임이 조금 달라져도 사진이 배경을 넘치거나 공백이 생기지 않는다.
  */
 export async function compose4cut(shots: ImageData[], frameSrc: string): Promise<HTMLCanvasElement> {
   const frame = await load(frameSrc);
@@ -61,17 +63,28 @@ export async function compose4cut(shots: ImageData[], frameSrc: string): Promise
 
   ctx.drawImage(frame, 0, 0, W, H);
 
-  // 슬롯 레이아웃 — 프레임 중앙 빈 공간에 맞춘 여백
-  const marginX = W * 0.085;
-  const top = H * 0.065;
-  const bottom = H * 0.115;
+  // 프레임 장식이 가장자리 밴드에만 있으므로, 안쪽 빈 영역의 대략 여백
+  const insetX = W * 0.075;
+  const top = H * 0.06;
+  const bottom = H * 0.1;
   const gap = H * 0.022;
-  const slotW = W - marginX * 2;
-  const slotH = (H - top - bottom - gap * 3) / 4;
+  const maxSlotW = W - insetX * 2;
+
+  // 가용 높이에서 슬롯 높이를 산출하고 16:9 비율에 맞춰 폭을 정함 — 넘치지 않는 최대 크기
+  const availH = H - top - bottom - gap * 3;
+  let slotH = availH / 4;
+  let slotW = slotH * (16 / 9);
+  if (slotW > maxSlotW) {
+    slotW = maxSlotW;
+    slotH = slotW * (9 / 16);
+  }
+  const slotX = (W - slotW) / 2;
+  const totalH = slotH * 4 + gap * 3;
+  const slotY = top + Math.max(0, (availH - totalH) / 2);
 
   shots.slice(0, 4).forEach((shot, i) => {
-    const x = marginX;
-    const y = top + i * (slotH + gap);
+    const x = slotX;
+    const y = slotY + i * (slotH + gap);
     const c = toCanvas(shot);
     // 한지 여백(안쪽 매트) + 먹 테두리
     ctx.fillStyle = '#f7f1e3';
@@ -84,7 +97,7 @@ export async function compose4cut(shots: ImageData[], frameSrc: string): Promise
 
   // 낙관 — 우하단 주홍 도장
   const seal = W * 0.055;
-  const sx = W - marginX - seal;
+  const sx = W - insetX - seal;
   const sy = H - bottom * 0.45 - seal / 2;
   ctx.fillStyle = SEAL;
   ctx.fillRect(sx, sy, seal, seal);

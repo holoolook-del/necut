@@ -19,30 +19,28 @@ interface Job {
   prompt: string;
   aspect: string;
 }
+const CENTER = 'The center is one large uninterrupted EMPTY rectangle of plain warm-cream hanji paper filling about 80% of the image — absolutely no motifs, objects, ornaments, shadows or text inside the center area.';
+
 const JOBS: Job[] = [
   {
     file: 'public/assets/frames/horangi.webp',
     aspect: '9:21',
-    prompt:
-      'Korean minhwa folk painting photo frame, tall vertical format: ornate decorative border ONLY along the edges — tiger and magpie folk motifs at top and bottom corners, pine branches on sides. The large center area is completely EMPTY plain aged hanji paper texture, warm cream color. Traditional Korean painting style, flat mineral pigments, no text, no letters.',
+    prompt: `Korean minhwa folk painting photo-strip frame, tall vertical format: a thin decorative border band hugging the outermost edges only — tiger and magpie folk motifs inside the top border band and bottom border band only. ${CENTER} Flat mineral pigments on aged paper, traditional Korean folk art.`,
   },
   {
     file: 'public/assets/frames/moran.webp',
     aspect: '9:21',
-    prompt:
-      'Korean minhwa folk painting photo frame, tall vertical format: decorative border ONLY along the edges — lush peony flowers (moran) blooming at top and bottom edges, butterflies on the sides. The large center area is completely EMPTY plain aged hanji paper, warm cream. Traditional Korean folk art style, vivid mineral reds and greens, no text, no letters.',
+    prompt: `Korean minhwa folk painting photo-strip frame, tall vertical format: a thin decorative border band hugging the outermost edges only — lush peony flowers and butterflies inside the top and bottom border bands only, thin vine lines along the side bands. ${CENTER} Vivid mineral reds and greens, traditional Korean folk art.`,
   },
   {
     file: 'public/assets/frames/hak.webp',
     aspect: '9:21',
-    prompt:
-      'Korean minhwa folk painting photo frame, tall vertical format: decorative border ONLY along the edges — crane birds and pine tree motifs at top and bottom, clouds along the sides. The large center area is completely EMPTY plain aged hanji paper, warm cream. Traditional Korean sipjangsaeng folk art, muted mineral pigments, no text, no letters.',
+    prompt: `Tall vertical Korean folk art border frame: thin decorative band along the outermost edges only, painted with herons, pine branches and drifting clouds in the top and bottom bands. ${CENTER} Ink and light mineral colors on warm aged paper.`,
   },
   {
     file: 'public/assets/frames/dancheong.webp',
     aspect: '9:21',
-    prompt:
-      'Korean dancheong temple pattern photo frame, tall vertical format: geometric lotus and cloud pattern border ONLY along the edges in teal, vermilion, ochre, indigo. The large center area is completely EMPTY plain aged hanji paper, warm cream. Flat traditional Korean decorative style, no text, no letters.',
+    prompt: `Korean dancheong temple pattern photo-strip frame, tall vertical format: a geometric lotus-and-cloud border band hugging the outermost edges only, in teal, vermilion, ochre and indigo. ${CENTER} Flat traditional Korean decorative pattern.`,
   },
   {
     file: 'public/assets/icon.png',
