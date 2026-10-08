@@ -1,15 +1,17 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #f5eedd;
-  --color-paper-dim: #ece2cc;
-  --color-ink: #16151a;
+  --color-night: #16141f;
+  --color-night-soft: #221e30;
+  --color-hanji: #f3ead7;
+  --color-gold: #c9a227;
+  --color-gold-bright: #e8c766;
   --color-vermilion: #c8402a;
-  --color-inkline: #4a4536;
 }
 
 body {
-  background-color: var(--color-paper);
-  color: var(--color-ink);
+  background: linear-gradient(to bottom, #07060d, #12101d 55%, #16141f);
+  background-attachment: fixed;
+  color: var(--color-hanji);
   font-family: 'Noto Serif KR', 'Nanum Myeongjo', serif;
 }

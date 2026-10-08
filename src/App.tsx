@@ -156,38 +156,38 @@ export function App() {
   };
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-paper px-4 pb-6 pt-5 text-ink">
+    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-night px-4 pb-6 pt-5 text-hanji">
       <header className="mb-4">
         <a
           href="https://holoolook-del.github.io/sajoo/"
-          className="text-xs text-inkline/60 underline-offset-2 hover:underline"
+          className="inline-block rounded-lg border border-gold/60 px-3 py-1.5 text-sm text-gold-bright"
         >
           ← 사주 홈으로
         </a>
         <div className="mt-1 text-center">
-          <h1 className="text-2xl font-bold tracking-widest">민화네컷</h1>
-          <p className="mt-1 text-xs text-inkline/70">내 사진이 민화가 되는 네 컷</p>
+          <h1 className="text-2xl font-bold tracking-widest text-gold">민화네컷</h1>
+          <p className="mt-1 text-xs text-hanji/70">내 사진이 민화가 되는 네 컷</p>
         </div>
       </header>
 
       {step === 'shoot' && (
         <section className="flex flex-1 flex-col gap-4">
           {/* 뷰파인더 */}
-          <div className="relative overflow-hidden rounded-2xl border-2 border-ink/20 bg-ink/5">
+          <div className="relative overflow-hidden rounded-2xl border-2 border-gold/30 bg-night-soft">
             {camError ? (
               <div className="flex h-72 flex-col items-center justify-center gap-2 p-6 text-center">
-                <p className="text-sm text-inkline">카메라를 열 수 없습니다 (인앱 브라우저일 수 있어요)</p>
-                <p className="text-xs text-inkline/60">아래에서 사진을 올려주세요</p>
+                <p className="text-sm text-hanji">카메라를 열 수 없습니다 (인앱 브라우저일 수 있어요)</p>
+                <p className="text-xs text-hanji/60">아래에서 사진을 올려주세요</p>
               </div>
             ) : (
               <>
                 <video ref={videoRef} autoPlay playsInline muted className="h-72 w-full object-cover" />
                 {countdown !== null && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <span className="text-8xl font-bold text-paper drop-shadow-lg">{countdown}</span>
+                    <span className="text-8xl font-bold text-night drop-shadow-lg">{countdown}</span>
                   </div>
                 )}
-                <div className="absolute right-2 top-2 rounded bg-ink/70 px-2 py-0.5 text-[10px] text-paper">
+                <div className="absolute right-2 top-2 rounded bg-night/70 px-2 py-0.5 text-[10px] text-night">
                   필터는 다음 단계에서 골라요
                 </div>
               </>
@@ -199,7 +199,7 @@ export function App() {
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-lg border border-ink/20 bg-paper-dim text-xs text-inkline/40"
+                className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-lg border border-gold/30 bg-night-soft text-xs text-hanji/40"
               >
                 {shots[i] ? <ShotThumb shot={shots[i]} filterId={filterId} /> : i + 1}
               </div>
@@ -212,7 +212,7 @@ export function App() {
                 type="button"
                 onClick={startShooting}
                 disabled={busy}
-                className="w-full rounded-xl bg-ink py-4 text-lg font-bold text-paper disabled:opacity-40"
+                className="w-full rounded-xl bg-gold py-4 text-lg font-bold text-night disabled:opacity-40"
               >
                 {busy ? '촬영 중…' : '네 컷 촬영 시작'}
               </button>
@@ -220,7 +220,7 @@ export function App() {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="w-full rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+              className="w-full rounded-xl border border-gold/40 py-3 text-sm font-bold text-hanji"
             >
               사진 올리기 (최대 4장)
             </button>
@@ -240,7 +240,7 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => setShots((s) => s.slice(0, -1))}
-                  className="flex-1 rounded-lg border border-ink/20 py-2 text-xs text-inkline"
+                  className="flex-1 rounded-lg border border-gold/30 py-2 text-xs text-hanji"
                 >
                   한 장 지우기
                 </button>
@@ -248,7 +248,7 @@ export function App() {
                   type="button"
                   onClick={() => setStep('frame')}
                   disabled={shots.length < 4}
-                  className="flex-1 rounded-lg bg-ink py-2 text-xs font-bold text-paper disabled:opacity-40"
+                  className="flex-1 rounded-lg bg-gold py-2 text-xs font-bold text-night disabled:opacity-40"
                 >
                   프레임 고르기 ({shots.length}/4)
                 </button>
@@ -260,7 +260,7 @@ export function App() {
 
       {step === 'frame' && (
         <section className="flex flex-1 flex-col gap-4">
-          <h2 className="text-sm font-bold text-inkline">필터를 고르세요</h2>
+          <h2 className="text-sm font-bold text-hanji">필터를 고르세요</h2>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {FILTERS.map((f) => (
               <button
@@ -268,18 +268,18 @@ export function App() {
                 type="button"
                 onClick={() => setFilterId(f.id)}
                 className={`w-20 shrink-0 overflow-hidden rounded-lg border-2 text-left ${
-                  f.id === filterId ? 'border-ink shadow-md' : 'border-ink/15'
+                  f.id === filterId ? 'border-gold shadow-md' : 'border-gold/25'
                 }`}
               >
                 <FilterPreview shot={shots[0]} filterId={f.id} />
-                <div className="bg-paper/90 px-1.5 py-1">
-                  <p className="text-[10px] font-bold leading-tight text-inkline">{f.name}</p>
-                  <p className="text-[8px] leading-tight text-inkline/60">{f.desc}</p>
+                <div className="bg-night-soft/90 px-1.5 py-1">
+                  <p className="text-[10px] font-bold leading-tight text-hanji">{f.name}</p>
+                  <p className="text-[8px] leading-tight text-hanji/60">{f.desc}</p>
                 </div>
               </button>
             ))}
           </div>
-          <h2 className="text-sm font-bold text-inkline">프레임을 고르세요</h2>
+          <h2 className="text-sm font-bold text-hanji">프레임을 고르세요</h2>
           <div className="grid grid-cols-2 gap-3">
             {FRAMES.map((f, i) => (
               <button
@@ -287,11 +287,11 @@ export function App() {
                 type="button"
                 onClick={() => setFrameIdx(i)}
                 className={`overflow-hidden rounded-xl border-2 text-left ${
-                  i === frameIdx ? 'border-ink shadow-md' : 'border-ink/15'
+                  i === frameIdx ? 'border-gold shadow-md' : 'border-gold/25'
                 }`}
               >
                 <img src={`${BASE}assets/frames/${f.id}.webp`} alt={f.name} className="aspect-[3/7] w-full object-cover" />
-                <p className="bg-paper/90 px-2 py-1.5 text-xs font-bold text-inkline">{f.name}</p>
+                <p className="bg-night-soft/90 px-2 py-1.5 text-xs font-bold text-hanji">{f.name}</p>
               </button>
             ))}
           </div>
@@ -299,7 +299,7 @@ export function App() {
             <button
               type="button"
               onClick={() => setStep('shoot')}
-              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+              className="flex-1 rounded-xl border border-gold/40 py-3 text-sm font-bold text-hanji"
             >
               ← 다시 찍기
             </button>
@@ -307,7 +307,7 @@ export function App() {
               type="button"
               onClick={compose}
               disabled={busy}
-              className="flex-[2] rounded-xl bg-ink py-3 text-sm font-bold text-paper disabled:opacity-40"
+              className="flex-[2] rounded-xl bg-gold py-3 text-sm font-bold text-night disabled:opacity-40"
             >
               {busy ? '합성 중…' : '네컷 완성하기'}
             </button>
@@ -317,14 +317,14 @@ export function App() {
 
       {step === 'result' && resultUrl && (
         <section className="flex flex-1 flex-col gap-4">
-          <div className="overflow-hidden rounded-xl border-2 border-ink/20 shadow-lg">
+          <div className="overflow-hidden rounded-xl border-2 border-gold/50 shadow-[0_0_30px_rgba(201,162,39,0.15)]">
             <img src={resultUrl} alt="완성된 민화네컷" className="w-full" />
           </div>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={restart}
-              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+              className="flex-1 rounded-xl border border-gold/40 py-3 text-sm font-bold text-hanji"
             >
               다시 찍기
             </button>
@@ -334,7 +334,7 @@ export function App() {
                 setResultUrl(null);
                 setStep('frame');
               }}
-              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+              className="flex-1 rounded-xl border border-gold/40 py-3 text-sm font-bold text-hanji"
             >
               필터·배경 바꾸기
             </button>
@@ -343,20 +343,20 @@ export function App() {
             <button
               type="button"
               onClick={download}
-              className="flex-1 rounded-xl border border-ink/30 py-3 text-sm font-bold text-inkline"
+              className="flex-1 rounded-xl border border-gold/40 py-3 text-sm font-bold text-hanji"
             >
               저장
             </button>
             <button
               type="button"
               onClick={share}
-              className="flex-[2] rounded-xl bg-ink py-3 text-sm font-bold text-paper"
+              className="flex-[2] rounded-xl bg-gold py-3 text-sm font-bold text-night"
             >
               친구에게 공유
             </button>
           </div>
           {notice && <p className="text-center text-xs text-vermilion">{notice}</p>}
-          <p className="text-center text-[11px] text-inkline/50">사진은 기기에만 저장되고 서버로 보내지 않습니다</p>
+          <p className="text-center text-[11px] text-hanji/50">사진은 기기에만 저장되고 서버로 보내지 않습니다</p>
         </section>
       )}
     </main>
@@ -382,7 +382,7 @@ function FilterPreview({ shot, filterId }: { shot: ImageData | undefined; filter
     const w = 96;
     const h = 54;
     if (!shot) {
-      ctx.fillStyle = '#ece2cc';
+      ctx.fillStyle = '#221e30';
       ctx.fillRect(0, 0, w, h);
       return;
     }
